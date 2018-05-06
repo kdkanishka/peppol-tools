@@ -1,35 +1,43 @@
 package com.kani.peppol.model;
 
+import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
+
 public class PeppolDocIdentifier {
+    private DocumentTypeIdentifier documentTypeIdentifier;
     private String docIdentifier;
     private String uri;
+    private String peppolId;
 
     public PeppolDocIdentifier() {
     }
 
-    public PeppolDocIdentifier(String docIdentifier, String uri) {
+    public PeppolDocIdentifier(DocumentTypeIdentifier documentTypeIdentifier, String docIdentifier, String uri, String peppolId) {
+        this.documentTypeIdentifier = documentTypeIdentifier;
         this.docIdentifier = docIdentifier;
         this.uri = uri;
+        this.peppolId = peppolId;
+    }
+
+    public DocumentTypeIdentifier getDocumentTypeIdentifier() {
+        return documentTypeIdentifier;
     }
 
     public String getDocIdentifier() {
         return docIdentifier;
     }
 
-    public void setDocIdentifier(String docIdentifier) {
-        this.docIdentifier = docIdentifier;
-    }
-
     public String getUri() {
         return uri;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public String getPeppolId() {
+        return peppolId;
     }
-
+    
     @Override
     public String toString() {
         return docIdentifier;
     }
+    
+    
 }
