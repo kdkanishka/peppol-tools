@@ -1,6 +1,7 @@
 package com.kani.peppol;
 
 import com.kani.exception.LookupUIException;
+import com.kani.peppol.model.LookupEnvironmentEnum;
 import no.difi.vefa.peppol.common.lang.PeppolLoadingException;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.ParticipantIdentifier;
@@ -17,32 +18,44 @@ public class LookupUtil {
 
     }
 
-    public List<DocumentTypeIdentifier> fetchDocumentIdentifiers(String peppolId) throws LookupUIException {
+    public List<DocumentTypeIdentifier> fetchDocumentIdentifiers(String peppolId, LookupEnvironmentEnum lookupEnv)
+            throws LookupUIException {
         ParticipantIdentifier participantIdentifier = ParticipantIdentifier.of(peppolId);
         try {
-            LookupClient lookupClient = LookupClientBuilder.forProduction().build();
+            LookupClient lookupClient = getLookupClient(lookupEnv);
             List<DocumentTypeIdentifier> documentTypeIdentifiers =
                     lookupClient.getDocumentIdentifiers(participantIdentifier);
             return documentTypeIdentifiers;
         } catch (PeppolLoadingException e) {
-            throw new LookupUIException("Unable to load lookup client", e);
+            throw new LookupUIException(e.getMessage(), e);
         } catch (LookupException e) {
-            throw new LookupUIException("Unable to load lookup client", e);
+            throw new LookupUIException(e.getMessage(), e);
         }
     }
 
-    public ServiceMetadata fetchServiceMetadata(String peppolId, DocumentTypeIdentifier documentTypeIdentifier) throws LookupUIException {
+    public ServiceMetadata fetchServiceMetadata(String peppolId, DocumentTypeIdentifier documentTypeIdentifier,
+                                                LookupEnvironmentEnum lookupEnv) throws LookupUIException {
         ParticipantIdentifier participantIdentifier = ParticipantIdentifier.of(peppolId);
         try {
-            LookupClient lookupClient = LookupClientBuilder.forProduction().build();
-            ServiceMetadata serviceMetadata = lookupClient.getServiceMetadata(participantIdentifier,documentTypeIdentifier);
+            LookupClient lookupClient = getLookupClient(lookupEnv);
+            ServiceMetadata serviceMetadata = lookupClient.getServiceMetadata(participantIdentifier, documentTypeIdentifier);
             return serviceMetadata;
         } catch (PeppolLoadingException e) {
-            throw new LookupUIException("Unable to load lookup client", e);
+            throw new LookupUIException(e.getMessage(), e);
         } catch (PeppolSecurityException e) {
-            throw new LookupUIException("Unable to get service metadata due to peppol security concerns", e);
+            throw new LookupUIException(e.getMessage(), e);
         } catch (LookupException e) {
-            throw new LookupUIException("Unable to perform lookup", e);
+            throw new LookupUIException(e.getMessage(), e);
         }
+    }
+
+    private LookupClient getLookupClient(LookupEnvironmentEnum lookupEnv) throws PeppolLoadingException {
+        LookupClient lookupClient;
+        if (lookupEnv == LookupEnvironmentEnum.PROD) {
+            lookupClient = LookupClientBuilder.forProduction().build();
+        } else {
+            lookupClient = LookupClientBuilder.forTest().build();
+        }
+        return lookupClient;
     }
 }

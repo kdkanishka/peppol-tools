@@ -7,15 +7,17 @@ public class PeppolDocIdentifier {
     private String docIdentifier;
     private String uri;
     private String peppolId;
+    private LookupEnvironmentEnum lookupEnv;
 
     public PeppolDocIdentifier() {
     }
 
-    public PeppolDocIdentifier(DocumentTypeIdentifier documentTypeIdentifier, String docIdentifier, String uri, String peppolId) {
+    public PeppolDocIdentifier(DocumentTypeIdentifier documentTypeIdentifier, String docIdentifier, String uri, String peppolId, LookupEnvironmentEnum lookupEnv) {
         this.documentTypeIdentifier = documentTypeIdentifier;
         this.docIdentifier = docIdentifier;
         this.uri = uri;
         this.peppolId = peppolId;
+        this.lookupEnv = lookupEnv;
     }
 
     public DocumentTypeIdentifier getDocumentTypeIdentifier() {
@@ -38,6 +40,9 @@ public class PeppolDocIdentifier {
     public String toString() {
         return docIdentifier;
     }
-    
+
+    public LookupEnvironmentEnum getLookupEnv() {
+        return lookupEnv;
+    }
     
 }

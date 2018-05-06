@@ -7,28 +7,23 @@ package com.kani.ui;
 
 import com.kani.exception.LookupUIException;
 import com.kani.peppol.LookupUtil;
+import com.kani.peppol.model.LookupEnvironmentEnum;
 import com.kani.peppol.model.PeppolDocIdentifier;
 import com.kani.peppol.model.PeppolEndpoint;
+import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
+import no.difi.vefa.peppol.common.model.Endpoint;
+import no.difi.vefa.peppol.common.model.ProcessMetadata;
+import no.difi.vefa.peppol.common.model.ServiceMetadata;
+import sun.security.provider.X509Factory;
+
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.security.cert.CertificateEncodingException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
-import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
-import no.difi.vefa.peppol.common.model.Endpoint;
-import no.difi.vefa.peppol.common.model.ProcessMetadata;
-import no.difi.vefa.peppol.common.model.ServiceMetadata;
-import org.bouncycastle.openssl.PEMWriter;
-import sun.security.provider.X509Factory;
 
 /**
  *
@@ -100,7 +95,7 @@ public class PeppolToolUI extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaEncodedCertificate = new javax.swing.JTextArea();
-        jButton3 = new javax.swing.JButton();
+        jButtonSaveCert = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Peppol Lookup Utility");
@@ -172,6 +167,11 @@ public class PeppolToolUI extends javax.swing.JFrame {
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/link.png"))); // NOI18N
         jButton1.setText("Open");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/metadata.png"))); // NOI18N
         jButton2.setText("Metadata");
@@ -293,7 +293,7 @@ public class PeppolToolUI extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addContainerGap(69, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Subject", jPanel4);
@@ -320,7 +320,7 @@ public class PeppolToolUI extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
                     .addComponent(jTextFieldCertificateIssuerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(167, Short.MAX_VALUE))
+                .addContainerGap(159, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Issuer", jPanel5);
@@ -333,11 +333,11 @@ public class PeppolToolUI extends javax.swing.JFrame {
         jTextAreaEncodedCertificate.setRows(5);
         jScrollPane2.setViewportView(jTextAreaEncodedCertificate);
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save.png"))); // NOI18N
-        jButton3.setText("Save");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        jButtonSaveCert.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save.png"))); // NOI18N
+        jButtonSaveCert.setText("Save");
+        jButtonSaveCert.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                jButtonSaveCertActionPerformed(evt);
             }
         });
 
@@ -351,7 +351,7 @@ public class PeppolToolUI extends javax.swing.JFrame {
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel13)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton3)
+                        .addComponent(jButtonSaveCert)
                         .addGap(0, 696, Short.MAX_VALUE))
                     .addComponent(jScrollPane2))
                 .addContainerGap())
@@ -362,9 +362,9 @@ public class PeppolToolUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel13)
-                    .addComponent(jButton3))
+                    .addComponent(jButtonSaveCert))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -410,7 +410,7 @@ public class PeppolToolUI extends javax.swing.JFrame {
                     .addComponent(jTextFieldEndpointUrl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTabbedPane1)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -481,16 +481,26 @@ public class PeppolToolUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonLookupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLookupActionPerformed
+        final JFrame thisRef = this;
+
         SwingWorker lookupWorker = new SwingWorker() {
             @Override
-            protected Object doInBackground() throws Exception {
+            protected Object doInBackground() {
                 jLabelLoader.setVisible(true);
                 String peppolId = jTextFieldPeppold.getText();
+                LookupEnvironmentEnum lookupEnv = LookupEnvironmentEnum.PROD;
+                if (jComboBoxEnvironment.getSelectedItem() != null) {
+                    String selectedEnvText = (String) jComboBoxEnvironment.getSelectedItem();
+                    lookupEnv = LookupEnvironmentEnum.valueOf(selectedEnvText.toUpperCase());
+                }
+
                 try {
-                    List<DocumentTypeIdentifier> docIds = new LookupUtil().fetchDocumentIdentifiers(peppolId);
-                    loadDocTypes(docIds, peppolId);
+                    List<DocumentTypeIdentifier> docIds = new LookupUtil().fetchDocumentIdentifiers(peppolId, lookupEnv);
+                    loadDocTypes(docIds, peppolId, lookupEnv);
                 } catch (LookupUIException ex) {
-                    Logger.getLogger(PeppolToolUI.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(thisRef, "Fail to lookup because\n" + ex.getMessage(), "Lookup Faied!",
+                            JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
                 }
                 return null;
             }
@@ -513,16 +523,24 @@ public class PeppolToolUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBoxDoctypesActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        final JFrame thisRef = this;
+
         if (jComboBoxDoctypes.getSelectedItem() != null) {
             PeppolDocIdentifier selectedDocIdentifier = (PeppolDocIdentifier) jComboBoxDoctypes.getSelectedItem();
 
             SwingWorker metadataWorker = new SwingWorker() {
                 @Override
-                protected Object doInBackground() throws Exception {
+                protected Object doInBackground() {
                     jLabelServiceMetadataLoader.setVisible(true);
-                    ServiceMetadata peppolMetadata = new LookupUtil().fetchServiceMetadata(selectedDocIdentifier.getPeppolId(),
-                            selectedDocIdentifier.getDocumentTypeIdentifier());
-                    showPeppolServiceMetadata(peppolMetadata);
+                    try {
+                        ServiceMetadata peppolMetadata = new LookupUtil().fetchServiceMetadata(selectedDocIdentifier.getPeppolId(),
+                                selectedDocIdentifier.getDocumentTypeIdentifier(), selectedDocIdentifier.getLookupEnv());
+                        showPeppolServiceMetadata(peppolMetadata);
+                    } catch (LookupUIException ex) {
+                        JOptionPane.showMessageDialog(thisRef, "Unable to fetch service metadata", "Lookup Faied!",
+                                JOptionPane.ERROR_MESSAGE);
+                        ex.printStackTrace();
+                    }
                     return null;
                 }
 
@@ -567,34 +585,40 @@ public class PeppolToolUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jComboBoxEndpointsActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        String certificateName = jTextFieldPeppold.getText().length() > 0 ? jTextFieldPeppold.getText() + ".cer" : "cert.cer";
-        int result = fileChooser.showSaveDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            //save content to selected file
-            try {
-                File selectedFile = fileChooser.getSelectedFile();
-                File finalFile = new File(selectedFile, certificateName);
-                try (PrintWriter out = new PrintWriter(finalFile)) {
-                    out.println(X509Factory.BEGIN_CERT);
-                    out.print(jTextAreaEncodedCertificate.getText());
-                    out.println(X509Factory.END_CERT);
+    private void jButtonSaveCertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveCertActionPerformed
+        if (jTextAreaEncodedCertificate.getText().length() > 0) {
+            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            String certificateName = jTextFieldPeppold.getText().length() > 0 ? jTextFieldPeppold.getText() + ".cer" : "cert.cer";
+            int result = fileChooser.showSaveDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                //save content to selected file
+                try {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    File finalFile = new File(selectedFile, certificateName);
+                    try (PrintWriter out = new PrintWriter(finalFile)) {
+                        out.println(X509Factory.BEGIN_CERT);
+                        out.print(jTextAreaEncodedCertificate.getText());
+                        out.println(X509Factory.END_CERT);
+                    }
+                    JOptionPane.showMessageDialog(this, "Certificate Saved to " + certificateName, "Operation Successful", JOptionPane.INFORMATION_MESSAGE);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
                 }
-                JOptionPane.showMessageDialog(this, "Certificate Saved to " + certificateName  ,"Operation Successful", JOptionPane.INFORMATION_MESSAGE);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             }
         }
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_jButtonSaveCertActionPerformed
 
-    private void loadDocTypes(List<DocumentTypeIdentifier> docIds, String peppolId) {
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        JOptionPane.showMessageDialog(this, "Not supported yet :)");
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void loadDocTypes(List<DocumentTypeIdentifier> docIds, String peppolId, LookupEnvironmentEnum lookupEnv) {
         DefaultComboBoxModel docTypeComboboxModel = new DefaultComboBoxModel<PeppolDocIdentifier>();
         for (DocumentTypeIdentifier docId : docIds) {
             String identifier = docId.getIdentifier();
             String uri = docId.urlencoded();
-            PeppolDocIdentifier peppolDocIdentifier = new PeppolDocIdentifier(docId, identifier, uri, peppolId);
+            PeppolDocIdentifier peppolDocIdentifier = new PeppolDocIdentifier(docId, identifier, uri, peppolId, lookupEnv);
             docTypeComboboxModel.addElement(peppolDocIdentifier);
         }
         jComboBoxDoctypes.setModel(docTypeComboboxModel);
@@ -618,8 +642,8 @@ public class PeppolToolUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButtonLookup;
+    private javax.swing.JButton jButtonSaveCert;
     private javax.swing.JComboBox<String> jComboBoxDoctypes;
     private javax.swing.JComboBox<String> jComboBoxEndpoints;
     private javax.swing.JComboBox<String> jComboBoxEnvironment;
