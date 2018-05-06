@@ -9,6 +9,10 @@ import com.kani.exception.LookupUIException;
 import com.kani.peppol.LookupUtil;
 import com.kani.peppol.model.PeppolDocIdentifier;
 import com.kani.peppol.model.PeppolEndpoint;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.security.cert.CertificateEncodingException;
 import java.util.Base64;
 import java.util.Date;
@@ -16,17 +20,23 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.ProcessMetadata;
 import no.difi.vefa.peppol.common.model.ServiceMetadata;
+import org.bouncycastle.openssl.PEMWriter;
+import sun.security.provider.X509Factory;
 
 /**
  *
  * @author kanishka
  */
 public class PeppolToolUI extends javax.swing.JFrame {
+
+    final JFileChooser fileChooser = new JFileChooser();
 
     /**
      * Creates new form PeppolToolUI
@@ -72,14 +82,17 @@ public class PeppolToolUI extends javax.swing.JFrame {
         jTextFieldEndpointUrl = new javax.swing.JTextField();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel14 = new javax.swing.JLabel();
+        jPanel8 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jTextFieldCertificateSubjectName = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jTextFieldSubjectAlgo = new javax.swing.JTextField();
         jTextFieldSubjectValidityFrom = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
         jTextFieldSubjectValidityTo = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jTextFieldCertificateIssuerName = new javax.swing.JTextField();
@@ -87,8 +100,10 @@ public class PeppolToolUI extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaEncodedCertificate = new javax.swing.JTextArea();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Peppol Lookup Utility");
 
         jLabel1.setText("Peppol Id");
 
@@ -182,6 +197,25 @@ public class PeppolToolUI extends javax.swing.JFrame {
 
         jLabel7.setText("Endpoint URL");
 
+        jLabel14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/gnome-cert.png"))); // NOI18N
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel14)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel14)
+                .addContainerGap(41, Short.MAX_VALUE))
+        );
+
         jLabel8.setText("Name");
 
         jTextFieldCertificateSubjectName.setEditable(false);
@@ -194,51 +228,72 @@ public class PeppolToolUI extends javax.swing.JFrame {
 
         jLabel10.setText("Validit Period");
 
-        jLabel11.setText("To");
-
         jTextFieldSubjectValidityTo.setEditable(false);
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        jLabel11.setText("To");
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
                     .addComponent(jLabel9)
                     .addComponent(jLabel10))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jTextFieldSubjectAlgo, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTextFieldSubjectValidityFrom, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextFieldSubjectValidityTo, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTextFieldCertificateSubjectName))
-                .addContainerGap(78, Short.MAX_VALUE))
+                    .addComponent(jTextFieldCertificateSubjectName, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(37, Short.MAX_VALUE))
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(jTextFieldCertificateSubjectName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldSubjectAlgo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldSubjectValidityFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10)
+                    .addComponent(jLabel11)
+                    .addComponent(jTextFieldSubjectValidityTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(jTextFieldCertificateSubjectName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldSubjectAlgo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldSubjectValidityFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10)
-                    .addComponent(jLabel11)
-                    .addComponent(jTextFieldSubjectValidityTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Subject", jPanel4);
@@ -265,7 +320,7 @@ public class PeppolToolUI extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
                     .addComponent(jTextFieldCertificateIssuerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(136, Short.MAX_VALUE))
+                .addContainerGap(167, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Issuer", jPanel5);
@@ -278,6 +333,14 @@ public class PeppolToolUI extends javax.swing.JFrame {
         jTextAreaEncodedCertificate.setRows(5);
         jScrollPane2.setViewportView(jTextAreaEncodedCertificate);
 
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save.png"))); // NOI18N
+        jButton3.setText("Save");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -287,17 +350,21 @@ public class PeppolToolUI extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel13)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 748, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton3)
+                        .addGap(0, 696, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel13)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(jButton3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -470,7 +537,7 @@ public class PeppolToolUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jComboBoxEndpointsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxEndpointsActionPerformed
-        if(jComboBoxEndpoints.getSelectedItem() != null){
+        if (jComboBoxEndpoints.getSelectedItem() != null) {
             PeppolEndpoint selectedEndpoint = (PeppolEndpoint) jComboBoxEndpoints.getSelectedItem();
             jTextFieldTransportProfile.setText(selectedEndpoint.getTransportProfile());
             jTextFieldEndpointUrl.setText(selectedEndpoint.getUrl());
@@ -481,16 +548,17 @@ public class PeppolToolUI extends javax.swing.JFrame {
             String subjectSigAlgo = selectedEndpoint.getEndpoint().getCertificate().getSigAlgName();
             Date notAfter = selectedEndpoint.getEndpoint().getCertificate().getNotAfter();
             Date notBefore = selectedEndpoint.getEndpoint().getCertificate().getNotBefore();
+
             try {
                 String encoded = Base64.getEncoder().encodeToString(selectedEndpoint.getEndpoint().getCertificate().getEncoded());
                 jTextAreaEncodedCertificate.setText(encoded);
             } catch (CertificateEncodingException ex) {
                 ex.printStackTrace();
             }
-            
+
             //issuer
-            String issuerName =  selectedEndpoint.getEndpoint().getCertificate().getIssuerX500Principal().getName();
-                    
+            String issuerName = selectedEndpoint.getEndpoint().getCertificate().getIssuerX500Principal().getName();
+
             jTextFieldCertificateSubjectName.setText(subjectPrincipalName);
             jTextFieldSubjectAlgo.setText(subjectSigAlgo);
             jTextFieldSubjectValidityFrom.setText(notBefore.toString());
@@ -498,6 +566,28 @@ public class PeppolToolUI extends javax.swing.JFrame {
             jTextFieldCertificateIssuerName.setText(issuerName);
         }
     }//GEN-LAST:event_jComboBoxEndpointsActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        String certificateName = jTextFieldPeppold.getText().length() > 0 ? jTextFieldPeppold.getText() + ".cer" : "cert.cer";
+        int result = fileChooser.showSaveDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            //save content to selected file
+            try {
+                File selectedFile = fileChooser.getSelectedFile();
+                File finalFile = new File(selectedFile, certificateName);
+                try (PrintWriter out = new PrintWriter(finalFile)) {
+                    out.println(X509Factory.BEGIN_CERT);
+                    out.print(jTextAreaEncodedCertificate.getText());
+                    out.println(X509Factory.END_CERT);
+                }
+                JOptionPane.showMessageDialog(this, "Certificate Saved to " + certificateName  ,"Operation Successful", JOptionPane.INFORMATION_MESSAGE);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     private void loadDocTypes(List<DocumentTypeIdentifier> docIds, String peppolId) {
         DefaultComboBoxModel docTypeComboboxModel = new DefaultComboBoxModel<PeppolDocIdentifier>();
@@ -514,7 +604,7 @@ public class PeppolToolUI extends javax.swing.JFrame {
     private void showPeppolServiceMetadata(ServiceMetadata serviceMetadata) {
         ProcessMetadata<Endpoint> processMetadata = serviceMetadata.getProcesses().get(0); //TODO : works for 99.9% cases
         List<Endpoint> endpoints = processMetadata.getEndpoints();
-        
+
         DefaultComboBoxModel endpointComboModel = new DefaultComboBoxModel<PeppolEndpoint>();
         for (Endpoint endpoint : endpoints) {
             PeppolEndpoint peppolEndpoint = new PeppolEndpoint(endpoint, endpoint.getTransportProfile().getIdentifier(),
@@ -528,6 +618,7 @@ public class PeppolToolUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButtonLookup;
     private javax.swing.JComboBox<String> jComboBoxDoctypes;
     private javax.swing.JComboBox<String> jComboBoxEndpoints;
@@ -537,6 +628,7 @@ public class PeppolToolUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -553,6 +645,8 @@ public class PeppolToolUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextAreaEncodedCertificate;
