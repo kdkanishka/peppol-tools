@@ -10,6 +10,8 @@ import com.kani.peppol.LookupUtil;
 import com.kani.peppol.model.LookupEnvironmentEnum;
 import com.kani.peppol.model.PeppolDocIdentifier;
 import com.kani.peppol.model.PeppolEndpoint;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import no.difi.vefa.peppol.common.model.DocumentTypeIdentifier;
 import no.difi.vefa.peppol.common.model.Endpoint;
 import no.difi.vefa.peppol.common.model.ProcessMetadata;
@@ -24,6 +26,7 @@ import java.security.cert.CertificateEncodingException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import javax.swing.text.DefaultEditorKit;
 
 /**
  *
@@ -42,6 +45,26 @@ public class PeppolToolUI extends javax.swing.JFrame {
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/icons/vefa-peppol-ico.png")).getImage());
         jLabelLoader.setVisible(false);
         jLabelServiceMetadataLoader.setVisible(false);
+
+        addRightClickSupport();
+    }
+
+    private void addRightClickSupport() {
+        JPopupMenu popup = new JPopupMenu();
+        JMenuItem copyItem = new JMenuItem(new DefaultEditorKit.CopyAction());
+        copyItem.setText("Copy");
+        popup.add(copyItem);
+        
+        jTextFieldUri.setComponentPopupMenu(popup);
+        jTextFieldDoctype.setComponentPopupMenu(popup);
+        jTextFieldTransportProfile.setComponentPopupMenu(popup);
+        jTextFieldEndpointUrl.setComponentPopupMenu(popup);
+        jTextFieldCertificateSubjectName.setComponentPopupMenu(popup);
+        jTextFieldSubjectAlgo.setComponentPopupMenu(popup);
+        jTextFieldSubjectValidityFrom.setComponentPopupMenu(popup);
+        jTextFieldSubjectValidityTo.setComponentPopupMenu(popup);
+        jTextFieldCertificateIssuerName.setComponentPopupMenu(popup);
+        jTextAreaEncodedCertificate.setComponentPopupMenu(popup);
     }
 
     /**
@@ -410,7 +433,7 @@ public class PeppolToolUI extends javax.swing.JFrame {
                     .addComponent(jTextFieldEndpointUrl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
 
